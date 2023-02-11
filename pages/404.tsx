@@ -1,5 +1,7 @@
-import Head from 'next/head'
-import {ErrorComponent} from "@blitzjs/next"
+import Head from "next/head"
+import { ErrorComponent } from "@blitzjs/next"
+import { useEffect } from "react"
+import { useRouter } from "next/router"
 
 // ------------------------------------------------------
 // This page is rendered if a route match is not found
@@ -7,6 +9,11 @@ import {ErrorComponent} from "@blitzjs/next"
 export default function Page404() {
   const statusCode = 404
   const title = "This page could not be found"
+  const router = useRouter()
+  useEffect(() => {
+    router.push("/").catch((e) => {})
+  }, [router])
+
   return (
     <>
       <Head>
