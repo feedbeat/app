@@ -2,10 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-#__next {
-  height: 100%;
-  background: #313131;
-}
 #__next > div {
-  height: 100%;
+  overflow: auto;
+  height: 100vh;
+  background: #313131;
 }
