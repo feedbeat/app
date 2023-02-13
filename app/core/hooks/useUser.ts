@@ -36,7 +36,7 @@ const useUser = () => {
 
   return {
     isConnected: !!address,
-    isLoggedIn: !!profile && !!address,
+    isLoggedIn: !!profile,
     address,
     profile,
     startLogin: () => {

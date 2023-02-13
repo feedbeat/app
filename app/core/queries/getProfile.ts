@@ -6,6 +6,11 @@ export default async function getProfile(_ = null, { session }: Ctx) {
 
   const user = await db.user.findFirst({
     where: { id: session.userId as number },
+    select: {
+      id: true,
+      name: true,
+      Account: true,
+    },
   })
 
   return user
