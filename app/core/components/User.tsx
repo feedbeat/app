@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { FC } from "react"
 import { useAccount, useEnsAvatar, useEnsName } from "wagmi"
+import formatAddress from "@/app/utils/format-address"
 
 const User: FC = () => {
   const { address } = useAccount()
@@ -15,9 +16,7 @@ const User: FC = () => {
         </div>
         <div className="rounded-full bg-[#242221] -ml-[2rem] h-[3rem] w-[11.5rem] pl-[2.25rem] flex flex-col justify-center">
           <p className="text-white font-semibold text-xl leading-5">{ensName}</p>
-          <p className="text-[#FF7A2F] font-bold text-sm leading-4">
-            {address?.slice(0, 4) + "..." + address?.slice(-4)}
-          </p>
+          <p className="text-[#FF7A2F] font-bold text-sm leading-4">{formatAddress(address)}</p>
         </div>
       </a>
     </Link>
