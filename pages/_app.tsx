@@ -1,6 +1,6 @@
 import { ErrorFallbackProps, ErrorComponent, ErrorBoundary, AppProps } from "@blitzjs/next"
 import { AuthenticationError, AuthorizationError } from "blitz"
-import React from "react"
+import React, { Suspense } from "react"
 import { withBlitz } from "app/blitz-client"
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit"
 import { configureChains, createClient, WagmiConfig, mainnet } from "wagmi"
@@ -44,11 +44,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
   return (
     <ErrorBoundary FallbackComponent={RootErrorFallback}>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
-          {getLayout(<Component {...pageProps} />)}
-        </RainbowKitProvider>
-      </WagmiConfig>
+      <Suspense fallback={<div>Loading...</div>}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider chains={chains}>
+            {getLayout(<Component {...pageProps} />)}
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </Suspense>
     </ErrorBoundary>
   )
 }
