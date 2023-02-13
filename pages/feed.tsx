@@ -5,6 +5,7 @@ import { BlitzPage } from "@blitzjs/next"
 import Layout from "app/core/layouts/Layout"
 import { useState } from "react"
 import { IoAddOutline } from "react-icons/io5"
+import Profile from "@/app/core/components/Profile"
 
 const Feed: BlitzPage = () => {
   const [page, setPage] = useState(1)
@@ -37,7 +38,7 @@ const Feed: BlitzPage = () => {
           />
         </div>
         <div className="w-[32.5rem] mt-2 text-[#2F2F2F]">
-          <div className="bg-white rounded-lg">123</div>
+          <Profile />
         </div>
       </div>
     </Layout>
