@@ -4,13 +4,13 @@ import { useCallback, useEffect, useState } from "react"
 import { useAccount, useSignMessage } from "wagmi"
 import getNonce from "../mutations/getNonce"
 import login from "../mutations/login"
-import getProfile from "../queries/getProfile"
+import getMyProfile from "../queries/getMyProfile"
 import { getLoginMessage } from "../siwe"
 
 const useUser = () => {
   const { address } = useAccount()
   const { openConnectModal } = useConnectModal()
-  const [profile] = useQuery(getProfile, null)
+  const [profile] = useQuery(getMyProfile, null)
   const [getNonceMutation] = useMutation(getNonce)
   const [loginMutation] = useMutation(login)
   const { signMessageAsync } = useSignMessage()

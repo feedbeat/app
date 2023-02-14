@@ -6,9 +6,13 @@ import Layout from "app/core/layouts/Layout"
 import { useState } from "react"
 import { IoAddOutline } from "react-icons/io5"
 import Profile from "@/app/core/components/Profile"
+import { useQuery } from "@blitzjs/rpc"
+import getMyProfile from "@/app/core/queries/getMyProfile"
 
 const MyFeed: BlitzPage = () => {
   const [page, setPage] = useState(1)
+  const [profile] = useQuery(getMyProfile, null)
+
   return (
     <Layout>
       <div className="min-h-full bg-cover bg-bottom text-white pt-[8.25rem] px-12 pb-16 flex flex-wrap flex-row justify-between">
@@ -38,7 +42,7 @@ const MyFeed: BlitzPage = () => {
           />
         </div>
         <div className="w-[32.5rem] mt-2 text-[#2F2F2F]">
-          <Profile />
+          {profile ? <Profile profile={profile} /> : null}
         </div>
       </div>
     </Layout>

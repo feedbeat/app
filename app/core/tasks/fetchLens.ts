@@ -12,15 +12,30 @@ const profileQuery = gql`
     defaultProfile(request: { ethereumAddress: $address }) {
       id
       name
+      picture {
+        ... on MediaSet {
+          original {
+            url
+          }
+        }
+      }
     }
   }
 `
 
-type DefaultProfile = { id: string; name: string }
+export type LensProfile = {
+  id: string
+  name: string
+  picture: {
+    original: {
+      url: string
+    }
+  } | null
+}
 
-export const getLensProfile = async (address: string): Promise<DefaultProfile | null> => {
+export const getLensProfile = async (address: string): Promise<LensProfile | null> => {
   const response = await urqlClient
     .query(profileQuery, { address }, { requestPolicy: "network-only" })
     .toPromise()
-  return response.data.defaultProfile as DefaultProfile | null
+  return response.data.defaultProfile as LensProfile | null
 }

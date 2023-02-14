@@ -3,12 +3,24 @@ import Activity from "@/app/core/components/Activity"
 import Pagination from "@/app/core/components/Pagination"
 import { BlitzPage } from "@blitzjs/next"
 import Layout from "app/core/layouts/Layout"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { IoAddOutline } from "react-icons/io5"
 import Profile from "@/app/core/components/Profile"
+import { useQuery } from "@blitzjs/rpc"
+import getProfile from "@/app/core/queries/getProfile"
+import { useRouter } from "next/router"
 
 const Feed: BlitzPage = () => {
   const [page, setPage] = useState(1)
+  const router = useRouter()
+  const { profileId } = router.query
+  const parsedProfileId = parseInt((Array.isArray(profileId) ? profileId[0] : profileId) || "1")
+  const [profile, { isLoading }] = useQuery(getProfile, parsedProfileId)
+
+  useEffect(() => {
+    if (!isLoading && !profile) router.push("/").catch(console.error)
+  }, [isLoading, profile, router])
+
   return (
     <Layout>
       <div className="min-h-full bg-cover bg-bottom text-white pt-[8.25rem] px-12 pb-16 flex flex-wrap flex-row justify-between">
@@ -38,7 +50,7 @@ const Feed: BlitzPage = () => {
           />
         </div>
         <div className="w-[32.5rem] mt-2 text-[#2F2F2F]">
-          <Profile />
+          {profile ? <Profile profile={profile} /> : null}
         </div>
       </div>
     </Layout>

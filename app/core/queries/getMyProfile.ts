@@ -4,9 +4,11 @@ import db from "db"
 import { getLensProfile } from "../tasks/fetchLens"
 import { getTwitterProfile } from "../tasks/fetchTwitter"
 
-export default async function getProfile(profileId: number) {
+export default async function getMyProfile(_ = null, { session }: Ctx) {
+  if (!session.userId) return null
+
   const user = await db.user.findFirst({
-    where: { id: profileId },
+    where: { id: session.userId as number },
     select: {
       id: true,
       name: true,

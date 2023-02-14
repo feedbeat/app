@@ -2,7 +2,7 @@ import axios from "axios"
 
 const APIURL = "https://proof-service.next.id/"
 
-type TwitterProfile = {
+export type TwitterProfile = {
   platform: "twitter"
   identity: string
 }
