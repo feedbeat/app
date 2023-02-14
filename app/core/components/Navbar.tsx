@@ -12,7 +12,11 @@ const Navbar: FC = () => {
           <a className="text-white font-extrabold text-3xl">feadbeats</a>
         </Link>
         {isLoggedIn ? (
-          <User address={profile!.Account[0]!.identity as `0x${string}`} />
+          <User
+            address={
+              profile!.Account.find((e) => e.type === "ETH_WALLET")!.identity as `0x${string}`
+            }
+          />
         ) : (
           <button
             className="h-9 w-36 rounded-full text-white border-white border font-light"

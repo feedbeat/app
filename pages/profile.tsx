@@ -43,8 +43,6 @@ const Profile: BlitzPage = () => {
     }
   }, [addEthWallet, address, connecting])
 
-  const lensAccount = profile?.Account.find((e) => e.type === "LENS")
-  const twitterAccount = profile?.Account.find((e) => e.type === "TWITTER")
   return (
     <Layout>
       <div className="min-h-full bg-cover bg-bottom text-white pt-[8.5rem] px-12 pb-16">
@@ -88,34 +86,42 @@ const Profile: BlitzPage = () => {
         <div className="mt-10 flex gap-28">
           <div>
             <h3 className="font-semibold text-xl mb-4">Lens</h3>
-            {lensAccount ? (
+            {profile?.lens && profile?.lens.name ? (
               <Account
-                icon="/metamask-icon.png"
-                text={lensAccount.identity}
-                onRemove={() => {}}
+                icon="/lens-icon.png"
+                text={profile?.lens.name}
+                onRemove={() => {
+                  window.open("https://www.lensfrens.xyz/", "_blank", "noopener")
+                }}
                 alt="Lens Account"
               />
             ) : (
-              <button className="rounded-full border-2 border-white px-6 py-2 flex items-center my-2">
-                <IoAddOutline />
-                <span>Add Lens</span>
-              </button>
+              <Link href="https://www.lensfrens.xyz/" passHref legacyBehavior>
+                <a className="rounded-full border-2 border-white px-6 py-2 flex items-center my-2">
+                  <IoAddOutline />
+                  <span>Add Lens</span>
+                </a>
+              </Link>
             )}
           </div>
           <div>
             <h3 className="font-semibold text-xl mb-4">Twitter</h3>
-            {twitterAccount ? (
+            {profile?.twitter ? (
               <Account
-                icon="/metamask-icon.png"
-                text={twitterAccount.identity}
-                onRemove={() => {}}
-                alt="Lens Account"
+                icon="/accounts/twitter.png"
+                text={profile.twitter.identity}
+                onRemove={() => {
+                  window.open("https://mask.io/", "_blank", "noopener")
+                }}
+                alt="Twitter Account"
               />
             ) : (
-              <button className="rounded-full border-2 border-white px-6 py-2 flex items-center my-2">
-                <IoAddOutline />
-                <span>Add Twitter</span>
-              </button>
+              <Link href="https://mask.io/" passHref legacyBehavior>
+                <a className="rounded-full border-2 border-white px-6 py-2 flex items-center my-2">
+                  <IoAddOutline />
+                  <span>Add Twitter</span>
+                </a>
+              </Link>
             )}
           </div>
         </div>
