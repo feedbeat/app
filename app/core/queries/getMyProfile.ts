@@ -23,5 +23,5 @@ export default async function getMyProfile(_ = null, { session }: Ctx) {
   const twitter = await getTwitterProfile(primary)
   const ens = await fetchEnsName({ address: primary as `0x${string}` })
 
-  return { ...user, lens, twitter, ens }
+  return { user, lens, twitter, ens }
 }

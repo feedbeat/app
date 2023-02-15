@@ -48,13 +48,20 @@ type ProfileProps = {
     lens: LensProfile | null
     twitter: TwitterProfile | null
     ens: FetchEnsNameResult
-    Account: { id: number; type: string; identity: string }[]
-    id: number
-    name: string | null
+    user:
+      | {
+          Account: { id: number; type: string; identity: string }[]
+          id: number
+          name: string | null
+        }
+      | string
   }
 }
 const Profile: FC<ProfileProps> = ({ profile }) => {
-  const primary = profile.Account.find((e) => e.type === "ETH_WALLET")!.identity
+  const primary =
+    typeof profile.user === "string"
+      ? profile.user
+      : profile.user.Account.find((e) => e.type === "ETH_WALLET")!.identity
   const { data: ensAvatar } = useEnsAvatar({ address: primary as `0x${string}` })
 
   const avatar = ensAvatar || "/default-avatar.jpg"
@@ -64,10 +71,18 @@ const Profile: FC<ProfileProps> = ({ profile }) => {
         <Image height="64" width="64" src={avatar} alt="Avatar" />
       </div>
       <span className="mt-3 font-semibold text-sm mb-5">{profile.ens}</span>
-      {profile.Account.filter((e) => e.type === "ETH_WALLET").map((acc) => (
-        <Address address={acc.identity} key={acc.id} />
-      ))}
-      <Link href={`/feed/${profile.id}`} passHref legacyBehavior>
+      {typeof profile.user === "string" ? (
+        <Address address={profile.user} />
+      ) : (
+        profile.user.Account.filter((e) => e.type === "ETH_WALLET").map((acc) => (
+          <Address address={acc.identity} key={acc.id} />
+        ))
+      )}
+      <Link
+        href={`/feed/${typeof profile.user === "string" ? profile.user : profile.user.id}`}
+        passHref
+        legacyBehavior
+      >
         <a className="block rounded-lg bg-[#F7F7FA] px-4 py-[0.375rem] flex items-center justify-between my-5">
           <span>Activity Feed</span>
           <span className="text-black opcaity-40">
@@ -83,7 +98,8 @@ const Profile: FC<ProfileProps> = ({ profile }) => {
       {profile.lens ? (
         <Account
           avatar={
-            profile.lens.picture?.original.url.replace("ipfs://", "https://ipfs.io/ipfs/") || avatar
+            profile.lens.picture?.original?.url.replace("ipfs://", "https://ipfs.io/ipfs/") ||
+            avatar
           }
           name={profile.lens.name}
           icon="/accounts/lens.png"

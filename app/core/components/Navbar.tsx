@@ -14,7 +14,7 @@ const Navbar: FC = () => {
         {isLoggedIn ? (
           <User
             address={
-              profile!.Account.find((e) => e.type === "ETH_WALLET")!.identity as `0x${string}`
+              profile!.user.Account.find((e) => e.type === "ETH_WALLET")!.identity as `0x${string}`
             }
           />
         ) : (

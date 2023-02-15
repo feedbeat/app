@@ -9,13 +9,28 @@ import Profile from "@/app/core/components/Profile"
 import { useQuery } from "@blitzjs/rpc"
 import getProfile from "@/app/core/queries/getProfile"
 import { useRouter } from "next/router"
+import getFeed from "@/app/core/queries/getFeed"
+import { useEnsAvatar } from "wagmi"
 
+function parseProfileId(profileId: string) {
+  if (profileId.startsWith("0x")) return profileId
+  return parseInt(profileId)
+}
 const Feed: BlitzPage = () => {
   const [page, setPage] = useState(1)
   const router = useRouter()
   const { profileId } = router.query
-  const parsedProfileId = parseInt((Array.isArray(profileId) ? profileId[0] : profileId) || "1")
+  const parsedProfileId = parseProfileId(
+    (Array.isArray(profileId) ? profileId[0] : profileId) || "1"
+  )
   const [profile, { isLoading }] = useQuery(getProfile, parsedProfileId)
+  const [feed] = useQuery(getFeed, parsedProfileId)
+  const primary =
+    typeof profile?.user === "string"
+      ? profile?.user
+      : profile?.user.Account.find((e) => e.type === "ETH_WALLET")!.identity
+  const { data: ensAvatar } = useEnsAvatar({ address: primary as `0x${string}` | undefined })
+  const avatar = ensAvatar || "/default-avatar.jpg"
 
   useEffect(() => {
     if (!isLoading && !profile) router.push("/").catch(console.error)
@@ -27,18 +42,9 @@ const Feed: BlitzPage = () => {
         <div className="w-[44.5rem]">
           <h2 className="font-extrabold text-4xl mb-[6rem]">Activity feed</h2>
           <div className="mt-5">
-            <Activity
-              avatar="/default-avatar.jpg"
-              name="Default"
-              address="0x123456789a123456789a123456789a123456789a"
-              event={{
-                type: "Mint",
-                name: "Some",
-                image: "/example-nft.png",
-                networkIcon: "/networks/polygon.png",
-                description: "eqewqe",
-              }}
-            />
+            {feed.events.map((event, idx) => (
+              <Activity key={`event-${idx}`} {...event} />
+            ))}
           </div>
           <Pagination
             className="pl-16 mt-10"

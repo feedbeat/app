@@ -20,16 +20,13 @@ const MyFeed: BlitzPage = () => {
           <h2 className="font-extrabold text-4xl mb-[6rem]">Activity feed</h2>
           <div className="mt-5">
             <Activity
-              avatar="/default-avatar.jpg"
-              name="Default"
-              address="0x123456789a123456789a123456789a123456789a"
-              event={{
-                type: "Mint",
-                name: "Some",
-                image: "/example-nft.png",
-                networkIcon: "/networks/polygon.png",
-                description: "eqewqe",
-              }}
+              type="Mint"
+              name="Some"
+              image="/example-nft.png"
+              networkIcon="/networks/polygon.png"
+              description="eqewqe"
+              time={new Date("2023-01-01")}
+              to="0xf8F7873f80039D59783e7059ECfF5A6C49D70d47"
             />
           </div>
           <Pagination

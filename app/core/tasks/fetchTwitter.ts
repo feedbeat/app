@@ -12,7 +12,7 @@ export const getTwitterProfile = async (address: string): Promise<TwitterProfile
   )
   if (!data) return null
 
-  const twitterProof = data.ids?.[0].proofs.find((e) => e.platform === "twitter")
+  const twitterProof = data.ids?.[0]?.proofs.find((e) => e.platform === "twitter")
   if (!twitterProof) return null
 
   return twitterProof
