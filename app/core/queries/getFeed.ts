@@ -1,11 +1,23 @@
+import { Ctx } from "@blitzjs/next"
 import db from "db"
 import fetchRss3 from "../tasks/fetchRss3"
 
-export default async function getFeed(profileId: number | string, cursor: string, limit = 10) {
+type GetFeedParam = {
+  profileId?: number | string
+  limit: number
+  cursor?: string
+}
+export default async function getFeed(
+  { profileId, limit, cursor }: GetFeedParam,
+  { session }: Ctx
+) {
   let addresses: string[] = []
-  if (typeof profileId === "number") {
+  if (!profileId || typeof profileId === "number") {
+    if (!profileId) {
+      profileId = session.userId as number
+    }
     const profile = await db.user.findFirst({
-      where: { id: profileId },
+      where: { id: profileId as number },
       include: { Account: true },
     })
     addresses = profile?.Account.map((e) => (e.type === "ETH_WALLET" ? e.identity : null)).filter(
@@ -15,5 +27,5 @@ export default async function getFeed(profileId: number | string, cursor: string
     addresses = [profileId]
   }
 
-  return fetchRss3(addresses)
+  return fetchRss3(addresses, limit, cursor)
 }

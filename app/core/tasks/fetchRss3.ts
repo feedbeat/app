@@ -6,12 +6,17 @@ type FetchRss3Result = {
   events: Array<ActivityProps & { tx: string }>
 }
 
+const PhiAddresses = [
+  "0x3d8c06e65ebf06a9d40f313a35353be06bd46038",
+  "0x017bd973fe4d3e0f81bab69bccccb44679d86eab",
+]
+
 function filterAndTransform(records: any[]): Array<ActivityProps & { tx: string }> {
   const transformed: Array<ActivityProps & { tx: string }> = []
 
   records.forEach((record) => {
     record.actions.forEach((action) => {
-      if (action.metadata?.contract_address === "0x017bd973fe4d3e0f81bab69bccccb44679d86eab") {
+      if (PhiAddresses.includes(action.metadata?.contract_address)) {
         if (action.type === "mint") {
           transformed.push({
             type: "Mint",
@@ -45,7 +50,7 @@ function filterAndTransform(records: any[]): Array<ActivityProps & { tx: string 
 
 async function fetchRss3(
   addresses: string[],
-  limit: number = 100,
+  limit: number = 10,
   cursor_?: string
 ): Promise<FetchRss3Result> {
   const returning: FetchRss3Result = {
@@ -57,7 +62,7 @@ async function fetchRss3(
     const { data } = await axios.post("https://api.rss3.io/v1/notes", {
       address: addresses,
       tag: ["collectible"],
-      limit: 200,
+      limit: 100,
       refresh: false,
       include_poap: false,
       ignore_contract: false,
@@ -77,9 +82,12 @@ async function fetchRss3(
     cursor = data.cursor
   } while (returning.events.length < limit)
 
+  returning.cursor = cursor || null
   if (returning.events.length > limit) {
-    cursor = returning.events[limit - 1]!.tx
+    returning.cursor = returning.events[limit - 1]!.tx
     returning.events.length = limit
+  } else if (returning.events.length < limit) {
+    returning.cursor = null
   }
 
   return returning

@@ -50,7 +50,7 @@ const Profile: BlitzPage = () => {
         <div className="mt-10">
           <h3 className="font-semibold text-xl mb-4">Ethereum</h3>
           <div className="flex flex-wrap gap-8">
-            {profile?.Account.filter((e) => e.type === "ETH_WALLET").map((account) => (
+            {profile?.user.Account.filter((e) => e.type === "ETH_WALLET").map((account) => (
               <Account
                 icon="/metamask-icon.png"
                 text={formatAddress(account.identity)}

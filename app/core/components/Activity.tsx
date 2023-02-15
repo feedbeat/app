@@ -63,8 +63,9 @@ const MintActivity: FC<MintActivityProps> = (props) => {
 }
 
 const SendActivity: FC<SendActivityProps> = (props) => {
-  const { data: avatar } = useEnsAvatar({ address: props.to as `0x${string}` | undefined })
-  const { data: name } = useEnsName({ address: props.to as `0x${string}` | undefined })
+  const { data: avatar } = useEnsAvatar({ address: props.from as `0x${string}` | undefined })
+  const { data: name } = useEnsName({ address: props.from as `0x${string}` | undefined })
+  const { data: to } = useEnsName({ address: props.to as `0x${string}` | undefined })
 
   return (
     <div className="rounded-xl border-white p-3 border flex gap-x-2">
@@ -76,8 +77,8 @@ const SendActivity: FC<SendActivityProps> = (props) => {
           <span className="font-bold mr-1">{name}</span>
           <span className="text-sm text-[#828282] mr-5">{formatAddress(props.from)}</span>
           <Image width="38" height="19" src="/events/mint-event.svg" alt="Mint event" />
-          <span className="ml-2">Send an NFT to</span>
-          <span className="font-bold">{props.to}</span>
+          <span className="mx-2">Send an NFT to</span>
+          <span className="font-bold">{to || formatAddress(props.to)}</span>
         </div>
         <div className="flex mt-3 gap-5">
           <Image width="70" height="70" src="/example-nft.png" alt="Token image" />

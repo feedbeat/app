@@ -1,17 +1,29 @@
-import Account from "@/app/core/components/Account"
 import Activity from "@/app/core/components/Activity"
 import Pagination from "@/app/core/components/Pagination"
-import { BlitzPage } from "@blitzjs/next"
-import Layout from "app/core/layouts/Layout"
-import { useState } from "react"
-import { IoAddOutline } from "react-icons/io5"
 import Profile from "@/app/core/components/Profile"
-import { useQuery } from "@blitzjs/rpc"
+import getFeed from "@/app/core/queries/getFeed"
 import getMyProfile from "@/app/core/queries/getMyProfile"
+import getProfile from "@/app/core/queries/getProfile"
+import { BlitzPage } from "@blitzjs/next"
+import { useQuery } from "@blitzjs/rpc"
+import Layout from "app/core/layouts/Layout"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 
 const MyFeed: BlitzPage = () => {
-  const [page, setPage] = useState(1)
-  const [profile] = useQuery(getMyProfile, null)
+  const [cursor, setCursor] = useState<string | undefined>(undefined)
+  const [cursors, setCursors] = useState<string[]>([])
+  const router = useRouter()
+  const [profile, { isLoading }] = useQuery(getMyProfile, null)
+  const [feed] = useQuery(getFeed, {
+    profileId: profile?.user.id,
+    cursor,
+    limit: 10,
+  })
+
+  useEffect(() => {
+    if (!isLoading && !profile) router.push("/").catch(console.error)
+  }, [isLoading, profile, router])
 
   return (
     <Layout>
@@ -19,23 +31,23 @@ const MyFeed: BlitzPage = () => {
         <div className="w-[44.5rem]">
           <h2 className="font-extrabold text-4xl mb-[6rem]">Activity feed</h2>
           <div className="mt-5">
-            <Activity
-              type="Mint"
-              name="Some"
-              image="/example-nft.png"
-              networkIcon="/networks/polygon.png"
-              description="eqewqe"
-              time={new Date("2023-01-01")}
-              to="0xf8F7873f80039D59783e7059ECfF5A6C49D70d47"
-            />
+            {feed.events.map((event, idx) => (
+              <Activity key={`event-${cursor}-${idx}`} {...event} />
+            ))}
           </div>
           <Pagination
             className="pl-16 mt-10"
-            rangeStart={1}
-            rangeEnd={6}
-            end={8}
-            onGo={setPage}
-            current={page}
+            onPrev={() => {
+              if (cursor !== undefined) setCursor(cursors[cursors.indexOf(cursor) - 1])
+            }}
+            onNext={() => {
+              if (feed.cursor) {
+                setCursor(feed.cursor)
+                if (!cursors.includes(feed.cursor)) setCursors((e) => [...e, feed.cursor!])
+              }
+            }}
+            prev={cursor !== undefined}
+            next={!!feed.cursor}
           />
         </div>
         <div className="w-[32.5rem] mt-2 text-[#2F2F2F]">
