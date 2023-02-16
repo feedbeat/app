@@ -14,6 +14,7 @@ const useUser = () => {
   const [getNonceMutation] = useMutation(getNonce)
   const [loginMutation] = useMutation(login)
   const { signMessageAsync } = useSignMessage()
+  const [loginOnConnected, setLoginOnConnected] = useState(true)
 
   const _login = useCallback(
     async function () {
@@ -29,10 +30,11 @@ const useUser = () => {
   )
 
   useEffect(() => {
-    if (address) {
+    if (address && loginOnConnected) {
       _login().catch(console.error)
+      setLoginOnConnected(false)
     }
-  }, [_login, address, getNonceMutation, loginMutation, signMessageAsync])
+  }, [_login, address, getNonceMutation, loginMutation, loginOnConnected, signMessageAsync])
 
   return {
     isConnected: !!address,
