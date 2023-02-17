@@ -1,5 +1,6 @@
 import { Ctx } from "@blitzjs/next"
 import db from "db"
+import { getLensFollowingAddress } from "../tasks/fetchLens"
 import fetchRss3 from "../tasks/fetchRss3"
 
 type GetFeedParam = {
@@ -26,6 +27,7 @@ export default async function getFeed(
   } else {
     addresses = [profileId]
   }
+  const followings = await Promise.all(addresses.map(getLensFollowingAddress))
 
-  return fetchRss3(addresses, limit, cursor)
+  return fetchRss3([...followings.flat(), ...addresses], limit, cursor)
 }

@@ -23,6 +23,21 @@ const profileQuery = gql`
   }
 `
 
+const followingQuery = gql`
+  query Following($address: EthereumAddress!, $cursor: Cursor) {
+    following(request: { address: $address, cursor: $cursor }) {
+      items {
+        profile {
+          ownedBy
+        }
+      }
+      pageInfo {
+        next
+      }
+    }
+  }
+`
+
 export type LensProfile = {
   id: string
   name: string
@@ -38,4 +53,20 @@ export const getLensProfile = async (address: string): Promise<LensProfile | nul
     .query(profileQuery, { address }, { requestPolicy: "network-only" })
     .toPromise()
   return response.data.defaultProfile as LensProfile | null
+}
+
+export const getLensFollowingAddress = async (address: string): Promise<Array<string>> => {
+  const result: Array<string> = []
+  let cursor: string | undefined = undefined
+
+  do {
+    const response = await urqlClient
+      .query(followingQuery, { address, cursor }, { requestPolicy: "network-only" })
+      .toPromise()
+
+    result.push(...response.data.following.items.map((e) => e.profile.ownedBy))
+    cursor = response.data.following.pageInfo.next
+  } while (cursor)
+
+  return result
 }
